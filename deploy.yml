@@ -1,0 +1,20 @@
+ - name: Deploy pocketcleaner
+   hosts: localhost
+   connection: local
+   gather_facts: False
+   vars:
+     aws_lambda_function_name: clojure_example
+
+   tasks: 
+   - include_vars: "{{ item }}"
+     with_fileglob: vars/*
+
+   - lambda:
+       name: "{{ aws_lambda_function_name }}"
+       state: present
+       path: "target/clojure-lambda-example-0.1.0-standalone.jar"
+       runtime: 'java8'
+       role_arn: "{{ aws_lambda_execution_role_arn }}"
+       handler: "handler"
+       memory_size: 512
+       timeout: 10
